@@ -20,7 +20,7 @@ int dx[] = {-1, 1, 0, 0};
 int dy[] = {0, 0, -1, 1};
 
 int board[55][55];
-int vis[55][55][55];
+int vis[55][55];
 void solve() {
   int n;
   cin >> n;
@@ -31,36 +31,30 @@ void solve() {
       board[i][j] = s[j]-'0';
     }
   }
-  queue<tuple<int, int, int>> q;
-  q.push({0, 0, 0});
-  vis[0][0][0] = 1;
+  queue<pair<int, int>> q;
+  q.push({0, 0});
+  vis[0][0] = 1;
   while(!q.empty()) {
-    int x, y, z;
-    tie(x, y, z) = q.front();
+    int x, y;
+    tie(x, y) = q.front();
     q.pop();
     for(int dir = 0; dir < 4; dir ++) {
       int nx = x + dx[dir];
       int ny = y + dy[dir];
-      int nz = z;
-      if(nx < 0 || nx >= n || ny < 0 || ny >= n || nz >= 50) continue;
+      if(nx < 0 || nx >= n || ny < 0 || ny >= n) continue;
       if(board[nx][ny] == 1) {
-        if(vis[nx][ny][nz] != 0) continue;
+        if(vis[nx][ny] != 0 && vis[nx][ny] <= vis[x][y]) continue;
+        vis[nx][ny] = vis[x][y];
       }
       else {
-        nz ++;
-        if(vis[nx][ny][nz] != 0) continue;
+        if(vis[nx][ny] != 0 && vis[nx][ny] <= vis[x][y] + 1) continue;
+        vis[nx][ny] = vis[x][y] + 1;
       }   
-      q.push({nx, ny, nz});
-      vis[nx][ny][nz] = 1;
+      q.push({nx, ny});
     }
   }
 
-  for(int i = 0; i < 55; i ++) {
-    if(vis[n-1][n-1][i] != 0) {
-      cout << i;
-      return;
-    }
-  }
+  cout << vis[n-1][n-1]-1;
 }
 
 // ************************************
