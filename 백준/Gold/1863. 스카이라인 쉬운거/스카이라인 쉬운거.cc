@@ -30,13 +30,10 @@ void solve() {
   stack<int> st;
   int ans = 0;
   for(int i = 0; i < N; i ++) {
-    if(Y[i] == 0) {
-      while(!st.empty()) st.pop();
-      continue;
-    }
     while(!st.empty() && st.top() > Y[i]) {
         st.pop();
     }
+    if(Y[i] == 0) continue;
     if(st.empty() || st.top() != Y[i]) {
       st.push(Y[i]);
       ans ++;
