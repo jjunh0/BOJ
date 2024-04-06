@@ -22,46 +22,23 @@ int dy[] = {0, 1, 0, -1};
 #define int ll
 int N, ans = -1e15;
 string s;
+
+int calc(int a, char op, int b) {
+  if(op == '+') return a+b;
+  else if(op == '-') return a-b;
+  else return a*b;
+}
+
 void func(int cur, int val) {
   if(cur >= N) {
     ans = max(ans, val);
     return;
   }
-  int tmp = val;
-  if(s[cur-1] == '+') {
-    tmp += (s[cur]-'0');
-  }
-  else if(s[cur-1] == '-') {
-    tmp -= (s[cur]-'0');
-  }
-  else if(s[cur-1] == '*') {
-    tmp *= (s[cur]-'0');
-  }
-  func(cur+2, tmp);
+  func(cur+2, calc(val, s[cur-1], s[cur] - '0'));
   if(cur == N-1) {
     return;
   }
-  int b = (s[cur] - '0');
-  if(s[cur+1] == '+') {
-    b += (s[cur+2] -'0');
-  }
-  else if(s[cur+1] == '-') {
-    b -= (s[cur+2] -'0');
-  }
-  else if(s[cur+1] == '*') {
-    b *= (s[cur+2] -'0');
-  }
-  tmp = val;
-  if(s[cur-1] == '+') {
-    tmp += b;
-  }
-  else if(s[cur-1] == '-') {
-    tmp -= b;
-  }
-  else if(s[cur-1] == '*') {
-    tmp *= b;
-  }
-  func(cur+4, tmp);
+  func(cur+4, calc(val, s[cur-1], calc(s[cur]-'0', s[cur+1], s[cur+2]-'0')));
 }
 
 void solve() {
