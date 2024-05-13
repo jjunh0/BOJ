@@ -19,9 +19,10 @@ const char nl = '\n';
 
 int dx[] = {-1, 0, 1, 0};
 int dy[] = {0, 1, 0, -1};
-vector<int> adj[10'005], radj[10'000];
-bool vis[10'0050], vis2[10'005];
+vector<int> adj[100005], radj[100005];
+bool vis[100005], vis2[100005];
 int func(int cur) {
+  if(vis[cur]) return 0;
   int cnt = 1;
   vis[cur] = 1;
   for(int nxt : adj[cur]) {
@@ -32,6 +33,7 @@ int func(int cur) {
   return cnt;
 }
 int func2(int cur) {
+  if(vis2[cur]) return 0;
   int cnt = 1;
   vis2[cur] = 1;
   for(int nxt : radj[cur]) {
