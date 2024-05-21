@@ -22,15 +22,13 @@ int dy[] = {0, 1, 0, -1};
 int n, m;
 int a[50005];
 int dp[5][50005];
-
+int pre[50005];
 int func(int cnt, int idx) {
   if(idx == n) return 0;
   if(dp[cnt][idx] != -1) return dp[cnt][idx];
   int result = func(cnt, idx+1);
   if(cnt > 0 && idx+m <= n) {
-    int t = 0;
-    for(int i = idx; i < idx+m; i ++) t += a[i];
-    result = max(result, t + func(cnt-1, idx+m));
+    result = max(result, pre[idx+m] - pre[idx] + func(cnt-1, idx+m));
   }
   dp[cnt][idx] = result;
   return result;
@@ -39,6 +37,7 @@ int func(int cnt, int idx) {
 void solve() {
   cin >> n;
   for(int i = 0; i < n; i ++) cin >> a[i];
+  for(int i = 0; i < n; i ++) pre[i+1] = pre[i] + a[i];
   for(int i = 0; i < 5; i ++) fill(dp[i], dp[i]+n+1, -1);
   cin >> m;
   cout << func(3, 0);
