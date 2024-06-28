@@ -30,38 +30,35 @@ void solve() {
   }
   sort(A, A+n);
   vector<int> arr;
-  vector<pi> path(500005);
+  stack<pi> st;
   arr.pb(A[0].Y);
-  path[A[0].Y] = {1, -1};
+  st.push({0, A[0].X});
   for(int i = 1; i < n; i ++) {
     if(arr.back() < A[i].Y) {
-      path[A[i].Y] = {sz(arr)+1, arr.back()};
+      st.push({sz(arr), A[i].X});
       arr.pb(A[i].Y);
     }
     else {
       int idx = lower_bound(all(arr), A[i].Y) - arr.begin();
       arr[idx] = A[i].Y;
-      if(idx == 0) path[A[i].Y] = {idx+1, -1};
-      else path[A[i].Y] = {idx+1, arr[idx-1]};
+      st.push({idx, A[i].X});
     }
   }
-  int max_sz = 0, max_val = -1;
-  for(int i = 1; i <= 500000; i ++) {
-    if(path[i].X > max_sz) {
-      max_sz = path[i].X;
-      max_val = i;
+  vector<int> ans;
+  int len = sz(arr)-1;
+  while(!st.empty()) {
+    auto cur = st.top();
+    st.pop();
+    if(cur.X == len) {
+      len --;
+    } 
+    else {
+      ans.pb(cur.Y);
     }
   }
-  int cur = max_val;
-  cout << n - path[cur].X << nl;
-  vector<bool> lis(500005);
-  while(cur != -1) {
-    lis[cur] = 1;
-    cur = path[cur].Y;
-  }
-  for(int i = 0; i < n; i ++) {
-    if(!lis[A[i].Y]) cout << A[i].X << nl;
-  }
+  reverse(all(ans));
+  cout << sz(ans) << nl;
+  for(int i = 0; i < sz(ans); i ++) cout << ans[i] << nl;
 }
 
 // ************************************
