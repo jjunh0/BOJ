@@ -39,7 +39,7 @@ void solve() {
       if(board[i][j] == 'E') tie(e_x, e_y) = {i, j};
     }
   }
-  while(!q.empty()) {
+  while(sz(q)) {
     auto [x, y, bit] = q.front();
     q.pop();
     if(board[x][y] == 'E' && bit == (1<<cnt_x) - 1) {
