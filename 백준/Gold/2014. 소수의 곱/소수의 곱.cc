@@ -29,7 +29,6 @@ void solve() {
     cin >> e;
     pq.push(e);
   }
-  sort(rall(A));
   while(n-- > 1) {
     int cur = pq.top();
     pq.pop();
