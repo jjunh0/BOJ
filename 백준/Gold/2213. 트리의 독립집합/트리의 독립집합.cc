@@ -22,28 +22,15 @@ int dx[] = {-1, 0, 1, 0};
 int dy[] = {0, 1, 0, -1};
 vector<int> adj[10005], ans;
 int A[10005];
-int dp[10005][3];
-int func(int cur, int p, bool flag) { // flag -> 1이면 내 위에꺼 선택
-  int ret = 0;
-  if(dp[cur][0] == -1) {
-    for(auto nxt : adj[cur]) {
-      if(nxt == p) continue;
-      ret += func(nxt, cur, 0); // cur 선택 x
-    }
-    dp[cur][0] = ret;
+int dp[10005][3]; // dp[i][0] -> i번째를 선택하지 않았을 때의 최대값
+void func(int cur, int p) { 
+  dp[cur][1] = A[cur];
+  for(auto nxt : adj[cur]) {
+    if(p == nxt) continue;
+    func(nxt, cur);
+    dp[cur][1] += dp[nxt][0];
+    dp[cur][0] += max(dp[nxt][1], dp[nxt][0]);
   }
-  if(flag) return dp[cur][0];
-
-  int ret2 = 0;
-  if(!flag && dp[cur][1] == -1) { // cur 선택 o
-    ret2 = A[cur];
-    for(auto nxt : adj[cur]) {
-      if(nxt == p) continue;
-      ret2 += func(nxt, cur, 1);
-    }
-    dp[cur][1] = ret2;
-  }
-  return max(dp[cur][0], dp[cur][1]);
 }
 
 void func2(int cur, int p, bool flag) { // cur 선택 여부
@@ -61,7 +48,6 @@ void solve() {
   cin >> n;
   for(int i = 0; i < n; i ++) {
     cin >> A[i];
-    fill(dp[i], dp[i]+2, -1);
   }
   for(int i = 0; i < n-1; i ++) {
     int x, y;
@@ -70,9 +56,10 @@ void solve() {
     adj[x].pb(y);
     adj[y].pb(x);
   }
-  cout << func(0, -1, 0) << nl;
+  func(0, -1);
   func2(0, -1, 0);
   sort(all(ans));
+  cout << max(dp[0][0], dp[0][1]) << nl;
   for(auto e : ans) cout << e+1 << ' ';
 }
 
