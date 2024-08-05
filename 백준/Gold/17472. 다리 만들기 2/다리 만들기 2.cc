@@ -10,62 +10,56 @@
 using namespace std;
 
 typedef pair<int, int> pi;
+typedef tuple<int, int, int> ti;
 typedef pair<ll,ll> pl;
 typedef vector<int> vi;
 typedef vector<ll> vl;
-typedef tuple<int, int, int> ti;
+
 const char nl = '\n';
 const int MX = 0x3f3f3f3f;
 const int MOD = 1'000'000'007;
 
 int dx[] = {-1, 0, 1, 0};
 int dy[] = {0, 1, 0, -1};
-int vis[15][15], board[15][15], dist[10][10], chk[10];
+int board[105];
+int p[105];
+
+int find(int x) {
+  if(p[x] == -1) return x;
+  return p[x] = find(p[x]);
+}
+
+bool merge(int a, int b) {
+  a = find(a);
+  b = find(b);
+  if(a == b) return 1;
+  p[a] = b;
+  return 0;
+}
+
 void solve() {
-  int n, m;
+  int n, m, T = 0;
   cin >> n >> m;
-  for(int i = 0; i < 10; i ++) {
-    fill(dist[i], dist[i]+10, MX);
-    for(int j = 0; j < m; j ++) {
-      cin >> board[i][j];
-    }
-  }
-  int cur_i = 1;
+  fill(p, p+105, -1);
   for(int i = 0; i < n; i ++) {
     for(int j = 0; j < m; j ++) {
-      if(vis[i][j] || board[i][j] == 0) continue;
-      queue<pi> q;
-      q.push({i, j});
-      vis[i][j] = cur_i;
-      while(sz(q)) {
-        auto cur = q.front();
-        q.pop();
-        for(int dir = 0; dir < 4; dir ++) {
-          int nx = dx[dir] + cur.X;
-          int ny = dy[dir] + cur.Y;
-          if(nx < 0 || nx >= n || ny < 0 || ny >= m) continue;
-          if(vis[nx][ny] || board[nx][ny] == 0) continue;
-          vis[nx][ny] = cur_i;
-          q.push({nx, ny});
-        }
-      }
-      cur_i ++;
+      cin >> board[i*m+j];
+      if(board[i*m+j]) T ++;
     }
   }
+  vector<ti> A;
   for(int i = 0; i < n; i ++) {
     for(int j = 0; j < m; j ++) {
-      if(board[i][j] == 0 || vis[i][j] == 0) continue;
+      if(board[i*m + j] == 0) continue;
       for(int dir = 0; dir < 4; dir ++) {
-        int nx = i;
-        int ny = j;
-        int cnt = 0;
+        int nx = i, ny = j, cnt = 0;
         while(1) {
           nx += dx[dir];
           ny += dy[dir];
           if(nx < 0 || nx >= n || ny < 0 || ny >= m) break;
-          if(vis[nx][ny] == vis[i][j]) break;
-          if(vis[nx][ny] != 0 && vis[nx][ny] != vis[i][j]) {
-            if(cnt >= 2) dist[vis[nx][ny]][vis[i][j]] = min(dist[vis[nx][ny]][vis[i][j]], cnt);
+          if(board[nx*m + ny] == 1) {
+            if(cnt != 1)
+              A.pb({cnt, i*m+j, nx*m+ny});
             break;
           }
           cnt ++;
@@ -73,32 +67,16 @@ void solve() {
       }
     }
   }
-  for(int i = 1; i < cur_i; i ++) dist[i][i] = 0;
-  priority_queue<ti, vector<ti>, greater<ti>> pq;
-  int cnt = 0;
-  chk[1] = 1;
-  for(int i = 1; i < cur_i; i ++){
-    if(dist[1][i] == MX || dist[1][i] <= 1) continue;
-    pq.push({dist[1][i], 1, i});
-  }
-
-  int ans = 0;
-  while(sz(pq) && cnt < cur_i-2) {
+  sort(all(A));
+  int ans = 0, cnt = 0;
+  for(int i = 0; i < sz(A); i ++) {
     int cost, a, b;
-    tie(cost, a, b) = pq.top();
-    pq.pop();
-    if(chk[b]) continue;
-    chk[b] = 1;
+    tie(cost, a, b) = A[i];
+    if(merge(a, b)) continue;
     ans += cost;
     cnt ++;
-    for(int i = 1; i < cur_i; i ++) {
-      if(dist[b][i] == MX || dist[b][i] <= 1) continue;
-      if(!chk[i]) {
-        pq.push({dist[b][i], b, i});
-      }
-    }
   }
-  cout << (cnt == cur_i-2 ? ans : -1) << nl;
+  cout << (T-1 == cnt ? ans : -1);  
 }
 
 // ************************************
