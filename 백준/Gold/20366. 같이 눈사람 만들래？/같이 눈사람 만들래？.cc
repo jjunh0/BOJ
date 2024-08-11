@@ -26,14 +26,13 @@ void solve() {
   cin >> n;
   for(int i = 0; i < n; i ++) cin >> a[i];
   sort(a, a+n);
-  int en = 0;
   int ans = 0x7fffffff;
   for(int i = 0; i < n; i ++) {
     for(int j = i+3; j < n; j ++) {
       int st = i+1, en = j-1;
       int m = a[i] + a[j];
       while(st < en) {
-        int s = a[st]+a[en];
+        int s = (a[st]+a[en]);
         if(s < m) st ++;
         else if(s > m) en --;
         else {
