@@ -32,13 +32,26 @@ void solve() {
     cin >> a >> b >> v;
     adj[a].pb({v, b});
     adj[b].pb({v, a});
-    A.pb({a, b});
   }
-  int org, ans = 0;
-  for(int i = 0; i < m; i ++) {
-    priority_queue<pi, vector<pi>, greater<pi>> pq;
-    vector<int> d(1005, MX);
+  priority_queue<pi, vector<pi>, greater<pi>> pq;
+  vector<int> d(1005, MX);
+  d[1] = 0;
+  pq.push({0, 1});
+  while(sz(pq)) {
+    auto [dist, cur] = pq.top();
+    pq.pop();
+    if(d[cur] != dist) continue;
+    for(auto nxt : adj[cur]) {
+      if(d[nxt.Y] <= dist + nxt.X) continue;
+      d[nxt.Y] = dist + nxt.X;
+      A.pb({cur, nxt.Y});
+      pq.push({d[nxt.Y], nxt.Y});
+    }
+  }
+  int org = d[n], ans = 0;
+  for(int i = 0; i < sz(A); i ++) {
     pq.push({0, 1});
+    fill(all(d), MX);
     d[1] = 0;
     while(sz(pq)) {
       auto [dist, cur] = pq.top();
@@ -46,15 +59,12 @@ void solve() {
       if(d[cur] != dist) continue;
       for(auto nxt : adj[cur]) {
         if(d[nxt.Y] <= dist + nxt.X) continue;
-        if(min(nxt.Y, cur) == min(A[i].X, A[i].Y) && max(nxt.Y, cur) == max(A[i].X, A[i].Y)) continue;
+        if(A[i].X == cur && A[i].Y == nxt.Y) continue;
         d[nxt.Y] = dist + nxt.X;
         pq.push({d[nxt.Y], nxt.Y});
       }
     }
-    if(i == 0) org = d[n];
-    else {
-      ans = max(ans, d[n]);
-    }
+    ans = max(ans, d[n]);
   }
   cout << (ans != MX ? ans - org : -1);
 }
