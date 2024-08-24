@@ -22,59 +22,40 @@ const int MOD = 1'000'000'007;
 int dx[] = {-1, 0, 1, 0};
 int dy[] = {0, 1, 0, -1};
 
-struct SegTree{
-	int size, N;
-	vector<ll> arr;
-	SegTree(int n){
-		size = n;
-		N = 1;
-		while(N < size) N *= 2;
-    arr.resize(2*N+1);
-    fill(all(arr), MX);
-	}
-	void update(int i, ll val){
-		i += N;
-		arr[i] = val;
-		while(i > 1){
-			i /= 2;
-			arr[i] = min(arr[i*2], arr[i*2+1]);
-		}
-	}
-  void construct(){
-		for(int i=N-1; i>0; i--)
-			arr[i] = min(arr[i*2], arr[i*2+1]);
-	}
-  void init(int i, ll val){
-		i += N;
-    arr[i] = val;
-	}
-  ll get(int L, int R, int nodeNum, int nodeL, int nodeR){
-      if(R < nodeL || nodeR < L) return MX;
-      if(L <= nodeL && nodeR <= R) return arr[nodeNum];
-      int mid = (nodeL + nodeR) / 2;
-      return min(get(L, R, nodeNum*2, nodeL, mid), get(L, R, nodeNum*2+1, mid+1, nodeR));
-  }
-  ll get(int L, int R) {
-    return get(L, R, 1, 0, N-1);
-  }
-};
+int p[4000005];
+
+int find(int x) {
+  if(p[x] < 0) return x;
+  return p[x] = find(p[x]);
+}
+
+void merge(int a, int b) {
+  a = find(a);
+  b = find(b);
+  if(a == b) return;
+  p[a] = b;
+}
 
 void solve() {
   int n, m, k;
   cin >> n >> m >> k;
-  SegTree st(n+1);
+  fill(p, p+n+1, -1);
+  vector<int> A(m);
   for(int i = 0; i < m; i ++) {
+    cin >> A[i];
+  }
+  sort(all(A));
+  int cur = 0;
+  for(int i = 1; i <= n; i ++) {
+    if(cur < m && i == A[cur]) cur ++;
+    else merge(i, i+1);
+  }
+  while(k --) {
     int t;
     cin >> t;
-    st.init(t, t);
-  } 
-  st.construct();
-  while(k--) {
-    int t;
-    cin >> t;
-    int cur = st.get(t+1, n);
+    int cur = find(t+1);
     cout << cur << nl;
-    st.update(cur, MX);
+    merge(cur, cur+1);
   }
 }
 
