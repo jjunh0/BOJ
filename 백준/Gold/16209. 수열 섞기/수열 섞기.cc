@@ -19,15 +19,15 @@ const int MOD = (int)1e9 + 7;
 int dx[] = {-1, 0, 1, 0};
 int dy[] = {0, 1, 0, -1};
 
-void solve() {
-  int N;
-  cin >> N;
-  vector<int> A(N);
-  for(auto &e : A) cin >> e;
-  sort(all(A));
-  // int ans = 0;
-  vector<int> B;
-  B.pb(A[0]);
+bool cmp(int a, int b) {
+  return abs(a) < abs(b);
+}
+
+void f(vector<int> &A, vector<int> & B) {
+  sort(all(A), cmp);
+  int N = sz(A);
+  if(N > 0)
+    B.pb(A[0]);
   for(int i = 2; i < N; i += 2) B.pb(A[i]);
   if(N&1) {
     for(int i = N-2; i >= 2; i -= 2) B.pb(A[i]);
@@ -35,11 +35,26 @@ void solve() {
   else {
     for(int i = N-1; i >= 2; i -= 2) B.pb(A[i]);
   }
-  B.pb(A[1]);
-  // ans = B[0] * B[N-1];
-  // for(int i = 1; i < N; i ++) ans += B[i] * B[i-1];
-  // cout << ans << nl;
+  if(N > 1)
+   B.pb(A[1]);
+}
+
+void solve() {
+  int n;
+  cin >> n;
+  vector<int> pos, neg;
+  for(int i = 0; i < n; i ++) {
+    int t;
+    cin >> t;
+    if(t <= 0) neg.pb(t);
+    else pos.pb(t);
+  }
+  vector<int> A, B;
+  f(pos, A), f(neg, B);
+  if(sz(A) && A.back() < A.front()) reverse(all(A));
+  if(sz(B) && B.back() < B.front()) reverse(all(B));
   for(auto &e : B) cout << e << ' ';
+  for(auto &e : A) cout << e << ' ';
 }
 
 // ************************************
