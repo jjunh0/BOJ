@@ -24,74 +24,27 @@ int A_cur = 0, ans = 0;
 deque<int> dq;
 int f(int cur, bool p) { // 1이면 cur부터 끝까지 최대
   int ret = 0;
-  if(val[cur] == '+') {
+  if(cur < 0) {
     if(p) {
-      if(L[cur] == -1) {
-        ret += dq.back();
-        dq.pop_back();
-      }
-      else {
-        ret += f(L[cur], p);
-      }
-      if(R[cur] == -1) {
-        ret += dq.back();
-        dq.pop_back();
-      }
-      else {
-        ret += f(R[cur], p);
-      }
+      ret = dq.back();
+      dq.pop_back();
     }
     else {
-      if(L[cur] == -1) {
-        ret += dq.front();
-        dq.pop_front();
-      }
-      else {
-        ret += f(L[cur], p);
-      }
-      if(R[cur] == -1) {
-        ret += dq.front();
-        dq.pop_front();
-      }
-      else {
-        ret += f(R[cur], p);
-      }
+      ret = dq.front();
+      dq.pop_front();
     }
+    return ret;
   }
-  else {
     if(p) {
-      if(L[cur] == -1) {
-        ret += dq.back();
-        dq.pop_back();
-      }
-      else {
-        ret += f(L[cur], 1);
-      }
-      if(R[cur] == -1) {
-        ret -= dq.front();
-        dq.pop_front();
-      }
-      else {
-        ret -= f(R[cur], 0);
-      }
+      ret += f(L[cur], 1);
+      if(val[cur] == '-') ret -= f(R[cur], 0);
+      else ret += f(R[cur], 1);
     }
     else {
-      if(L[cur] == -1) {
-        ret += dq.front();
-        dq.pop_front();
-      }
-      else {
-        ret += f(L[cur], 0);
-      }
-      if(R[cur] == -1) {
-        ret -= dq.back();
-        dq.pop_back();
-      }
-      else {
-        ret -= f(R[cur], 1);
-      }
+      ret += f(L[cur], 0);
+      if(val[cur] == '-') ret -= f(R[cur], 1);
+      else ret += f(R[cur], 0);
     }
-  }
   return ret;
 }
 
@@ -109,20 +62,14 @@ void solve() {
     int a, b;
     cin >> c >> a >> b;
     a -= N+1, b -= N+1;
-    if(a < 0) L[i] = -1;
-    else {
-      L[i] = a; 
-      P[a] = i;
-    }
-    if(b < 0) R[i] = -1;
-    else {
-      R[i] = b;
-      P[b] = i;
-    }
+    L[i] = a; 
+    P[a] = i;
+    R[i] = b;
+    P[b] = i;
     val[i] = c;
   }
   int root = 0;
-  while(P[root] != -1) {
+  while(P[root] >= 0) {
     root = P[root];
   }
   cout << f(root, 1);
